@@ -1,3 +1,4 @@
+
 # 🚀 ReachInbox — Production-Grade Email Job Scheduler & Dashboard
 
 A production-grade, fault-tolerant email scheduling engine and dashboard built for **ReachInbox**. The system schedules and dispatches emails at scale without cron jobs, preserves jobs across server restarts, enforces multi-worker rate limiting per sender, alerts team channels on Slack upon rate-limit triggers, indexes emails in Elasticsearch, and provides live queue observability via Bull-Board.
@@ -316,3 +317,4 @@ When `sender_count >= sender_limit`:
 2. **Elasticsearch Resilience**: Elasticsearch is fully integrated; if an evaluator runs without Docker, searches automatically fall back to the relational database.
 3. **Slack Connectivity**: Supports both Slack OAuth v2 and direct Slack Incoming Webhooks to accommodate local development without public HTTPS tunnels.
 4. **Idempotency Strategy**: Job IDs in BullMQ match database primary keys (`email.id`).
+
