@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String     @id @default(uuid())
+  email           String     @unique
+  name            String?
+  avatar          String?
+  slackToken      String?
+  slackWebhookUrl String?
+  slackChannel    String?
+  slackTeamName   String?
+  slackConnected  Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  emails          EmailJob[]
+}
+
+model EmailJob {
+  id                   String    @id @default(uuid())
+  userId               String?
+  user                 User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  senderEmail          String
+  recipientEmail       String
+  subject              String
+  body                 String
+  scheduledAt          DateTime
+  sentAt               DateTime?
+  status               String    @default("SCHEDULED") // SCHEDULED, SENDING, SENT, FAILED, RESCHEDULED_RATE_LIMIT, CANCELLED
+  etherealPreviewUrl   String?
+  errorMessage         String?
+  retryCount           Int       @default(0)
+  bullJobId            String?
+  hourlyLimit          Int?
+  delayBetweenEmailsMs Int?
+  batchId              String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([senderEmail, status])
+  @@index([scheduledAt])
+  @@index([status])
+}
+
+model RateLimitLog {
+  id          String   @id @default(uuid())
+  senderEmail String
+  hourWindow  String
+  count       Int      @default(0)
+  limitHitAt  DateTime?
+  notifiedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([senderEmail, hourWindow])
+}
